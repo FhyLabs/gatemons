@@ -1,0 +1,6 @@
+client/node_modules/
+client/package-lock.json
+gateway/node_modules/
+gateway/package-lock.json
+server/node_modules/
+server/package-lock.json

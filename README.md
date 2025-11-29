@@ -1,5 +1,7 @@
 # Gatemons [ID](./README-ID.md)
 
+<center><img src="./ss.png" /></center>
+
 This architecture allows **multiple tenants (customers)** to securely send data from various devices to a single gateway, while the server can fetch data per tenant without risking data mixing.
 
 ```

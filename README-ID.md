@@ -1,5 +1,7 @@
 # Gatemons [EN](./README.md)
 
+<center><img src="./ss.png" /></center>
+
 Arsitektur ini memungkinkan **beberapa tenant (pelanggan)** untuk mengirim data dari berbagai perangkat secara aman ke satu gateway, sementara server dapat mengambil data per tenant tanpa risiko data tercampur.
 
 ```

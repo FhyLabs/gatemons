@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import axios from "axios";
 import crypto from "crypto";
+import { getSystemInfo } from "./services/systemInfo.js";
 
 function generateSignature(payload) {
   const secret = process.env.GATEWAY_KEY;
@@ -12,12 +13,7 @@ function generateSignature(payload) {
 
 async function sendDeviceData() {
   try {
-    const payload = {
-      device: "Device_A",
-      cpu: Math.random() * 100,
-      ram: Math.random() * 100,
-    };
-
+	const payload = getSystemInfo();
     const signature = generateSignature(payload);
 
     const res = await axios.post(process.env.GATEWAY_URL, payload, {

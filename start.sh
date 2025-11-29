@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # Start client
-(cd client && npm run dev) &
+(cd client && npm start) &
 
 # Start gateway
-(cd gateway && npm run dev) &
+(cd gateway && npm start) &
 
 # Start server
-(cd server && npm run dev) &
+(cd server && npm start) &
 
 wait

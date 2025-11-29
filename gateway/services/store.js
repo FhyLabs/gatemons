@@ -4,9 +4,10 @@ const shards = new Map();
 const queues = new Map();
 const auditLogs = new Map();
 
-const TTL = 1000 * 60 * 60 * 24;
-const MAX_RETRIES = 3;
-const MAX_BUFFER = 1000;
+const TTL = parseInt(process.env.TTL_MS) || 1000 * 60 * 60 * 24;
+const MAX_RETRIES = parseInt(process.env.MAX_RETRIES) || 3;
+const MAX_BUFFER = parseInt(process.env.MAX_BUFFER) || 1000;
+const CLEANUP_INTERVAL = parseInt(process.env.CLEANUP_INTERVAL_MS) || 1000 * 60 * 10;
 
 setInterval(() => {
   const now = Date.now();
@@ -16,7 +17,7 @@ setInterval(() => {
     }
     if (deviceMap.size === 0) shards.delete(tenantKey);
   }
-}, 1000 * 60 * 10);
+}, CLEANUP_INTERVAL);
 
 export function verifySignature(tenantKey, payload, signature) {
   const secret = process.env.GATEWAY_KEY;

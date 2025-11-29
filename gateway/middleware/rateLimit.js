@@ -1,7 +1,8 @@
 const requests = new Map();
-const LIMIT = 100; // max 100 request
-const WINDOW = 1000 * 60; // per 1 menit
-const BURST = 20; // max burst
+
+const LIMIT = parseInt(process.env.RATE_LIMIT_MAX) || 100;
+const WINDOW = parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 1000 * 60;
+const BURST = parseInt(process.env.RATE_LIMIT_BURST) || 20; 
 
 export default function rateLimit(req, res, next) {
   const key = req.tenantKey;

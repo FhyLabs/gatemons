@@ -25,7 +25,7 @@ async function sendDeviceData() {
         "tenant-id": process.env.TENANT_ID,
         "apikey": process.env.API_KEY,
         "gateway-key": process.env.GATEWAY_KEY,
-        "x-signature": signature, // ✨ signature baru
+        "x-signature": signature,
       },
     });
 

@@ -1,22 +1,24 @@
-# 🚀 Gatemons
+# Gatemons [ID](./README-ID.md)
 
-This architecture allows multiple tenants (customers) to securely send data from various devices to a single gateway, while the server retrieves data per tenant without risk of data mixing.
+This architecture allows **multiple tenants (customers)** to securely send data from various devices to a single gateway, while the server can fetch data per tenant without risking data mixing.
 
 ```
 CLIENT POST → GATEWAY ← GET SERVER
 ```
 
-**Note:** The gateway **does not store data permanently** — it maintains a **temporary in-memory buffer per tenant per device**, always overwriting old data. Ideal for real-time monitoring of CPU, RAM, and devices.
+**Note:** The gateway **does not store data permanently** — it only keeps a **temporary buffer in memory per tenant per device**, always overwriting old data. Ideal for real-time monitoring of CPU, RAM, and device status.
+
+> Since the **gateway is the hub** of this architecture, **clients and servers can use any technology or programming language**. The only requirement is to follow the gateway’s HTTP API protocol and include headers and payloads correctly (`tenant-id`, `apikey`, `gateway-key`, `x-signature`).
 
 ---
 
 ## 🧱 System Components
 
-| Folder     | Function                                                        |
-| ---------- | --------------------------------------------------------------- |
-| `client/`  | Sends device data to the gateway                                |
-| `gateway/` | Validates tenants, verifies HMAC signature, buffers latest data |
-| `server/`  | Retrieves data from the gateway and exposes API dashboard       |
+| Folder     | Function                                                            |
+| ---------- | ------------------------------------------------------------------- |
+| `client/`  | Sends device data to the gateway                                    |
+| `gateway/` | Validates tenants, verifies HMAC signatures, stores the latest data |
+| `server/`  | Retrieves data from the gateway and provides API/dashboard          |
 
 ---
 
@@ -24,12 +26,12 @@ CLIENT POST → GATEWAY ← GET SERVER
 
 Every **POST/GET** request to the gateway must include the following headers:
 
-| Header        | Description                                          |
-| ------------- | ---------------------------------------------------- |
-| `tenant-id`   | Tenant ID                                            |
-| `apikey`      | Tenant API key                                       |
-| `gateway-key` | Global gateway secret key (.env)                     |
-| `x-signature` | HMAC SHA256 signature of payload (required for POST) |
+| Header        | Description                                              |
+| ------------- | -------------------------------------------------------- |
+| `tenant-id`   | Tenant ID                                                |
+| `apikey`      | Tenant API key                                           |
+| `gateway-key` | Global gateway secret (.env)                             |
+| `x-signature` | HMAC SHA256 signature of the payload (required for POST) |
 
 > If any header or signature is invalid, the gateway **rejects the request**.
 
@@ -37,31 +39,31 @@ Every **POST/GET** request to the gateway must include the following headers:
 
 ## 📝 Features
 
-* HMAC signature verification per POST request
-* Auth middleware (`tenant-id`, `apikey`, `gateway-key`)
+* HMAC signature verification for each POST request
+* Middleware authentication (`tenant-id`, `apikey`, `gateway-key`)
 * Rate limiting per tenant
 * Async queue for push operations per tenant
-* Retry mechanism for buffer overflow
+* Retry mechanism when buffer is full
 * Configurable buffer limit per tenant (`MAX_BUFFER`)
-* Data TTL automatic cleanup (default 24 hours)
+* Automatic data cleanup (default TTL: 24 hours)
 * Audit log for push, pull, enqueue, drop events per tenant
-* Per-device buffer → **no duplicate devices**
-* Always returns **latest state** without clearing buffer
-* Number of devices per tenant
-* Metrics
-* Audit logs per tenant
+* Buffer per device → **no duplicate devices**
+* Always returns **latest status** without deleting the buffer
+* Shows device count per tenant
+* Metrics collection
+* Audit log per tenant
 * Automatic cleanup every 10 minutes
 * Non-blocking event loop
-* Safe handling for tenants with no data
+* Safe handling for tenants without data
 
 ---
 
 ## 📌 Data Flow
 
 1. ⏩ **Client** sends monitoring data (CPU, RAM, etc.) every 5 seconds
-2. 🧠 **Gateway** validates headers and signature, then updates **latest state per device**
-3. 💾 Gateway stores data in **memory map** (no database)
-4. 🔁 **Server** fetches data from the gateway periodically
+2. 🧠 **Gateway** validates headers and signature, then updates **latest status per device**
+3. 💾 Gateway stores data in **memory** (no database)
+4. 🔁 **Server** periodically fetches data from the gateway
 
 **Advantage:** Full real-time streaming without permanent storage or data duplication.
 
@@ -77,7 +79,7 @@ npm install
 npm run dev
 ```
 
-The gateway is available at:
+Gateway available at:
 
 ```
 http://localhost:3000
@@ -91,7 +93,7 @@ npm install
 node index.js
 ```
 
-Client generates **HMAC signature** and sends data every 5 seconds.
+The client will create **HMAC signatures** and send data every 5 seconds.
 
 ### 3️⃣ Server
 
@@ -109,7 +111,7 @@ GET http://localhost:4000/data
 
 ---
 
-## 🔍 Example Request & Response
+## 🔍 Example Requests & Responses
 
 ### Client POST → Gateway
 
@@ -168,20 +170,20 @@ Response:
 
 ## 🧠 Advantages of Last State & Advanced Features
 
-| Feature                | Description                                  |
-| ---------------------- | -------------------------------------------- |
-| HMAC Verified          | Ensures payload integrity                    |
-| Lightweight            | No persistent DB, per-device snapshot only   |
-| Realtime               | Data always up-to-date                       |
-| Non-Duplicated Devices | Each device has only 1 latest payload        |
-| Async & Retry          | Non-blocking, automatic retry on buffer full |
-| Audit Logging          | Track tenant activities                      |
-| Scalable               | Handles thousands of tenants in-memory       |
-| Minimal RAM            | Only last state per device is stored         |
+| Feature                | Description                                     |
+| ---------------------- | ----------------------------------------------- |
+| HMAC Verified          | Ensures payload integrity                       |
+| Lightweight            | No permanent DB, only per-device snapshots      |
+| Realtime               | Data is always up-to-date                       |
+| Non-Duplicated Devices | Each device has only one latest payload         |
+| Async & Retry          | Non-blocking, automatic retry if buffer is full |
+| Audit Logging          | Tracks tenant activity                          |
+| Scalable               | Handles thousands of tenants in memory          |
+| Minimal RAM            | Only stores the last state per device           |
 
-Suitable for:
+Ideal for:
 
 * CPU / RAM / Network monitoring
 * IoT device status
 * Telemetry devices
-* Industrial machine health checks
+* Industrial machine health monitoring

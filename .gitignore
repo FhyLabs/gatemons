@@ -1,6 +1,9 @@
 client/node_modules/
 client/package-lock.json
+client/.env
 gateway/node_modules/
 gateway/package-lock.json
+gateway/.env
 server/node_modules/
 server/package-lock.json
+gateway/.env

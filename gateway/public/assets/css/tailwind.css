@@ -100,6 +100,14 @@
   #toc a[style*="margin-left: 0"] {
     @apply font-semibold text-cyan-300;
   }
+  
+  .code-wrapper {
+    @apply relative;
+  }
+
+  .copy-btn {
+    @apply absolute top-2 right-2 bg-cyan-400/20 hover:bg-cyan-400/40 text-cyan-300 text-xs px-2 py-1 rounded cursor-pointer transition-all;
+  }
 }
 
 *::-webkit-scrollbar {

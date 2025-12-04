@@ -78,13 +78,59 @@ Response
         "cpu": 65.32,
         "ram": 52.11
       },
-      "timestamp": 1732812300456
+      "timestamp": 1732812300456,
+      "status": "online"
     }
   ]
 }
 ```
 
-The server receives the **latest snapshot for every device** owned by the tenant.
+The server receives the **latest snapshot for every device**, now including **heartbeat status**.
+
+### Heartbeat Status
+
+URL
+
+```
+GET /data/heartbeat
+```
+
+Headers
+
+```http
+tenant-id: TENANT01
+apikey: ABC123
+gateway-key: GATEWAY_SECRET
+```
+
+Response
+
+```json
+{
+  "success": true,
+  "total": 1,
+  "devices": [
+    {
+      "device": "DEVICE_A",
+      "timestamp": 1732812300456,
+      "status": "online"
+    }
+  ]
+}
+```
+
+Heartbeat is calculated using:
+
+```
+status = online   -> last update ≤ TTL
+status = offline  -> last update > TTL
+```
+
+Default TTL = **30 seconds**, configurable via `.env`:
+
+```
+HEARTBEAT_TTL=30000
+```
 
 ### Active Devices
 
@@ -163,18 +209,19 @@ console.log(res.data.data);
 
 ### Summary
 
-| Action                 | Endpoint            | Used by   |
-| ---------------------- | ------------------- | --------- |
-| Send device data       | `POST /data`        | Client    |
-| Get latest device data | `GET /data`         | Server    |
-| Count active devices   | `GET /data/metrics` | Server    |
-| Signature header       | `x-signature`       | POST only |
+| Action                 | Endpoint              | Used by   |
+| ---------------------- | --------------------- | --------- |
+| Send device data       | `POST /data`          | Client    |
+| Get latest device data | `GET /data`           | Server    |
+| Count active devices   | `GET /data/metrics`   | Server    |
+| Heartbeat status list  | `GET /data/heartbeat` | Server    |
+| Signature header       | `x-signature`         | POST only |
 
 ### When is GateMons Suitable?
 
-| Use Case                            | Suitable |
-| ----------------------------------- | -------- |
-| Server monitoring (CPU/RAM/Storage) | ✔        |
-| Real-time IoT                       | ✔        |
-| Device status dashboard             | ✔        |
-| Historical database                 | ✔        |
+| Use Case                            | Suitable                 |
+| ----------------------------------- | ------------------------ |
+| Server monitoring (CPU/RAM/Storage) | ✔                        |
+| Real-time IoT                       | ✔                        |
+| Device status dashboard             | ✔                        |
+| Historical database                 | ✔ (external DB required) |

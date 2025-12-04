@@ -2,6 +2,7 @@ import express from "express";
 import auth from "../middleware/auth.js";
 import rateLimit from "../middleware/rateLimit.js";
 import { push, peek, size, metrics, verifySignature, getAudit } from "../services/store.js";
+import { getStatus } from "../utils/heartbeat.js";
 import { ok, error } from "../utils/response.js";
 
 const router = express.Router();
@@ -19,7 +20,23 @@ router.post("/", async (req, res) => {
 
 router.get("/", async (req, res) => {
   const data = await peek(req.tenantKey);
-  return ok(res, { data, total: data.length });
+  const result = data.map(item => ({
+    ...item,
+    status: getStatus(item.timestamp)
+  }));
+
+  return ok(res, { data: result, total: result.length });
+});
+
+router.get("/heartbeat", async (req, res) => {
+  const data = await peek(req.tenantKey);
+  const result = data.map(item => ({
+    device: item.payload.device,
+    timestamp: item.timestamp,
+    status: getStatus(item.timestamp)
+  }));
+
+  return ok(res, { devices: result, total: result.length });
 });
 
 router.get("/size", (req, res) => {

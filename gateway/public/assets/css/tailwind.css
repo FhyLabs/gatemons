@@ -4,59 +4,25 @@
   .prose {
     @apply max-w-none;
   }
+
   .prose * {
     @apply text-[1rem] leading-7 text-gray-300;
   }
+
   .prose h1 {
-    @apply text-4xl font-bold text-cyan-400 mt-6 mb-3;
+    @apply text-4xl font-bold text-cyan-400 pt-9 pt-3;
   }
   .prose h2 {
-    @apply text-3xl font-semibold text-cyan-300 mt-5 mb-3;
+    @apply text-3xl font-semibold text-cyan-300 pt-9 pt-3;
   }
   .prose h3 {
-    @apply text-2xl font-semibold text-cyan-300 mt-4 mb-2;
+    @apply text-2xl font-semibold text-cyan-300 pt-9 pt-2;
   }
+
   .prose p {
     @apply my-4;
   }
-  .prose ul, .prose ol {
-    @apply pl-6 my-4;
-  }
-  .prose li {
-    @apply mb-2;
-  }
-  .prose pre {
-    @apply bg-white/10 border border-cyan-300/30 p-4 rounded-xl overflow-x-auto my-4;
-  }
-  .prose code {
-    @apply text-cyan-300 text-sm;
-  }
-  .prose a {
-    @apply text-cyan-300 underline hover:text-white;
-  }
-  .prose table {
-    @apply w-full text-left border-collapse my-6 bg-white/5 rounded-xl overflow-hidden;
-  }
 
-  .prose thead {
-    @apply bg-cyan-500/10;
-  }
-
-  .prose th {
-    @apply px-4 py-3 font-bold text-cyan-300 border-b border-cyan-400/30 text-sm uppercase tracking-wider;
-  }
-
-  .prose td {
-    @apply px-4 py-3 border-b border-white/10 text-gray-200;
-  }
-
-  .prose tbody tr:hover {
-    @apply bg-cyan-400/5;
-  }
-
-  .prose table code {
-    @apply text-cyan-300 font-semibold;
-  }
   .prose ul, .prose ol {
     @apply my-4 pl-6 space-y-2;
   }
@@ -68,7 +34,6 @@
   .prose ul > li {
     @apply relative;
   }
-
   .prose ul > li::before {
     content: "▹";
     @apply absolute -left-5 text-cyan-300 font-bold;
@@ -100,9 +65,63 @@
   .prose ol > li:hover::before {
     @apply text-white;
   }
-  
+
+  .prose a {
+    @apply text-cyan-300 underline hover:text-white;
+  }
+
+  .prose pre {
+    @apply bg-white/10 border border-cyan-300/30 p-4 rounded-xl overflow-x-auto my-4;
+  }
+
+  .prose code {
+    @apply text-cyan-300 text-sm;
+  }
+
+  .prose table {
+    @apply w-full text-left border-collapse my-6 bg-white/5 rounded-xl overflow-hidden;
+  }
+  .prose thead {
+    @apply bg-cyan-500/10;
+  }
+  .prose th {
+    @apply px-4 py-3 font-bold text-cyan-300 border-b border-cyan-400/30 text-sm uppercase tracking-wider;
+  }
+  .prose td {
+    @apply px-4 py-3 border-b border-white/10 text-gray-200;
+  }
+  .prose tbody tr:hover {
+    @apply bg-cyan-400/5;
+  }
+  .prose table code {
+    @apply text-cyan-300 font-semibold;
+  }
 
   #toc a[style*="margin-left: 0"] {
     @apply font-semibold text-cyan-300;
   }
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.18);
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba(56, 189, 248, 0.35);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(56, 189, 248, 0.6);
+}
+
+* {
+  scrollbar-color: rgba(56, 189, 248, 0.45) rgba(0, 0, 0, 0.18);
+  scrollbar-width: thin;
 }

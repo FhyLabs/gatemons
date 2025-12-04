@@ -3,7 +3,7 @@ import path from "path";
 import { marked } from "marked";
 
 export function Documentation(req, res) {
-  const filePath = path.resolve("./database/docs/documentation.md");
+  const filePath = path.resolve("../database/docs/documentation.md");
 
   try {
     const markdown = fs.readFileSync(filePath, "utf8");

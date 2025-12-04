@@ -3,12 +3,12 @@ import crypto from "crypto";
 const shards = new Map();
 const queues = new Map();
 const auditLogs = new Map();
-
 const deviceConfig = new Map();
 
 function getConfig(tenantKey, deviceId) {
   const key = `${tenantKey}:${deviceId}`;
   if (deviceConfig.has(key)) return deviceConfig.get(key);
+
   return {
     ttl: parseInt(process.env.TTL_MS) || 1000 * 60 * 60 * 24,
     maxRetries: parseInt(process.env.MAX_RETRIES) || 3,
@@ -17,16 +17,24 @@ function getConfig(tenantKey, deviceId) {
   };
 }
 
+const CLEANUP_INTERVAL =
+  parseInt(process.env.CLEANUP_INTERVAL_MS) || 1000 * 60 * 10;
+
 setInterval(() => {
+  if (shards.size === 0) return;
+
   const now = Date.now();
   for (const [tenantKey, deviceMap] of shards.entries()) {
     for (const [deviceId, entry] of deviceMap.entries()) {
       const { ttl } = getConfig(tenantKey, deviceId);
-      if (now - entry.timestamp > ttl) deviceMap.delete(deviceId);
+      if (now - entry.timestamp > ttl) {
+        deviceMap.delete(deviceId);
+        logAudit(tenantKey, `cleanup_deleted_${deviceId}`);
+      }
     }
     if (deviceMap.size === 0) shards.delete(tenantKey);
   }
-}, 1000 * 60);
+}, CLEANUP_INTERVAL);
 
 export function verifySignature(tenantKey, payload, signature) {
   const secret = process.env.GATEWAY_KEY;
@@ -103,6 +111,7 @@ export function size(tenantKey) {
   if (!shards.has(tenantKey)) return 0;
   const now = Date.now();
   let count = 0;
+
   for (const [deviceId, entry] of shards.get(tenantKey).entries()) {
     if (now - entry.timestamp <= getConfig(tenantKey, deviceId).ttl) count++;
   }
@@ -113,6 +122,7 @@ export function metrics(tenantKey) {
   if (!shards.has(tenantKey)) return { tenant: 0, device: 0 };
   const now = Date.now();
   let deviceCount = 0;
+
   for (const [deviceId, entry] of shards.get(tenantKey).entries()) {
     if (now - entry.timestamp <= getConfig(tenantKey, deviceId).ttl) deviceCount++;
   }

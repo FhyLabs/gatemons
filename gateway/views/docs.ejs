@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>GateMons – Documentation</title>
+	<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+	<link rel="icon" type="image/png" href="/assets/images/favicon.png">
+	<link href="/assets/css/styles.css" rel="stylesheet">
+
+	<style>
+		body { font-family: 'Space Grotesk', sans-serif; }
+		.mono { font-family: 'JetBrains Mono', monospace; }
+
+		@media (max-width: 768px) {
+			#sidebar {
+				transform: translateX(-100%);
+			}
+		}
+	</style>
+</head>
+
+<body class="min-h-screen w-full bg-black text-white relative overflow-hidden select-none">
+	<video src="/assets/videos/hero.mp4" autoplay loop muted playsinline class="fixed top-0 left-0 w-full h-full object-cover opacity-50 -z-20"></video>
+	<div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(0,255,255,0.18),transparent_65%)] -z-10"></div>
+	<div class="absolute inset-0 bg-gradient-to-b from-black/75 via-black/50 to-black/90 -z-10"></div>
+
+	<header class="fixed z-50 top-0 w-full p-4 flex justify-between items-center backdrop-blur-lg bg-white/5 border-b border-cyan-300/20">
+		<div class="flex gap-2 items-center">
+			<img src="/assets/images/favicon.png" class="w-10 h-10 neon-glow-cyan" alt="gatemons">
+			<h2 class="text-xl md:text-2xl font-extrabold tracking-widest bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-sky-400 to-cyan-400">
+				DOCS
+			</h2>
+		</div>
+
+		<a href="/" class="mono text-xs md:text-sm text-cyan-300 hover:text-white transition-all hidden md:block">
+			<span class="flex items-center gap-2">
+				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 12H4m0 0l6-6m-6 6l6 6"/></svg>
+				Back to Home
+			</span>
+		</a>
+		<button id="menuBtn" class="md:hidden mono text-sm text-cyan-300 hover:text-white transition">
+			<span class="flex items-center gap-2">
+				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5" d="M4 7h3m13 0h-9m9 10h-3M4 17h9m-9-5h16"/></svg>
+				CONTENTS
+			</span>
+		</button>
+	</header>
+	<div id="overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden"></div>
+	<main class="flex flex-col md:flex-row w-full max-w-7xl mx-auto gap-4">
+		<aside id="sidebar" class="md:pb-4 md:pt-22 fixed md:static top-0 left-0 w-64 flex flex-col gap-4 z-50 transition-transform duration-300">
+
+			<div id="toc" class="h-screen md:h-full p-4 bg-black/90 rounded-r-md md:bg-white/5 border-r border-t border-b border-cyan-400/20 flex flex-col gap-3 text-sm tracking-wider">
+				<h3 class="border-b text-xl pb-2 text-cyan-300 font-bold mb-1 flex justify-between items-center">
+					CONTENT
+					<button id="closeBtn" class="md:hidden text-cyan-300 hover:text-white text-lg leading-none">✕</button>
+				</h3>
+			</div>
+		</aside>
+		<section class="h-screen pt-20 prose prose-invert flex-1 max-w-none w-full overflow-y-auto p-4" id="docsContent">
+			<%- html %>
+		</section>
+
+	</main>
+
+	<script>
+		const toc = document.getElementById("toc");
+		const headings = document.querySelectorAll("#docsContent h1, #docsContent h2, #docsContent h3");
+
+		headings.forEach(h => {
+			const id = h.textContent.replace(/\s+/g, "-").toLowerCase();
+			h.id = id;
+
+			const link = document.createElement("a");
+			link.href = "#" + id;
+			link.textContent = "• " + h.textContent;
+			link.className = "hover:text-cyan-300";
+			link.style.marginLeft = h.tagName === "H2" ? "8px" : h.tagName === "H3" ? "16px" : "0";
+			toc.appendChild(link);
+		});
+
+		const menuBtn = document.getElementById("menuBtn");
+		const sidebar = document.getElementById("sidebar");
+		const overlay = document.getElementById("overlay");
+		const closeBtn = document.getElementById("closeBtn");
+
+		function openSidebar() {
+			sidebar.style.transform = "translateX(0)";
+			overlay.classList.remove("hidden");
+		}
+		function closeSidebar() {
+			sidebar.style.transform = "translateX(-100%)";
+			overlay.classList.add("hidden");
+		}
+
+		menuBtn?.addEventListener("click", openSidebar);
+		closeBtn?.addEventListener("click", closeSidebar);
+		overlay?.addEventListener("click", closeSidebar);
+	</script>
+
+</body>
+</html>

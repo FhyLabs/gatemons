@@ -7,7 +7,7 @@ function formatUptime(seconds) {
 }
 
 
-export function landingRoute(req, res) {
+export function Landing(req, res) {
   const uptimeFormatted = formatUptime(process.uptime());
 
   const isOnline = process.uptime() > 0;

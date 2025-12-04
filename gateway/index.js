@@ -1,8 +1,8 @@
 import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
-import dataRoute from "./routes/api.js";
-import { landingRoute } from "./controllers/landingController.js";
+import apiRoute from "./routes/api.js";
+import webRoute from "./routes/web.js";
 import { ok } from "./utils/response.js";
 
 const app = express();
@@ -17,8 +17,8 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/data", dataRoute);
-app.get("/", landingRoute);
+app.use("/data", apiRoute);
+app.use("/", webRoute);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`[GATEWAY] running on http://localhost:${PORT}`));

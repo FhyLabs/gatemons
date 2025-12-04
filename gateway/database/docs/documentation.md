@@ -16,6 +16,14 @@ Every request to the gateway must include the following headers:
 
 If any header does not match → **the gateway rejects the request**.
 
+### Gateway Endpoints
+
+* **Local:** `http://localhost:3000/data`
+* **Demo:** `https://gatemons.vercel.app/data`
+
+> Use the local URL when running your own server. For quick testing or demonstration purposes, you can use the demo endpoint.
+
+
 ### Client → Gateway
 
 URL

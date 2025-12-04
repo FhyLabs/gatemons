@@ -1,16 +1,21 @@
 import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
 import apiRoute from "./routes/api.js";
 import webRoute from "./routes/web.js";
 import { ok } from "./utils/response.js";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const app = express();
 app.use(express.json({ limit: "10mb" }));
 
-app.use(express.static("public"));
 app.set("view engine", "ejs");
-app.set("views", "./views");
+app.set("views", path.join(__dirname, "views"));
+app.use(express.static(path.join(__dirname, "public")));
 
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);

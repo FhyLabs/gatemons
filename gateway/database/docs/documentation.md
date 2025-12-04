@@ -40,7 +40,7 @@ Clients send system or device status data to the Gateway.
 
 ```json
 {
-  "device": "device-123",
+  "device": "device-123",      // REQUIRED — must contain only A–Z a–z 0–9 _ -
   "hostname": "device-123",
   "platform": "linux",
   "cpu": "Intel(R) Core(TM) i7",

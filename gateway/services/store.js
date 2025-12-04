@@ -4,10 +4,8 @@ const shards = new Map();
 const queues = new Map();
 const auditLogs = new Map();
 
-// Menyimpan konfigurasi per tenant:device
-const deviceConfig = new Map(); // key = tenantKey:deviceId, value = { ttl, maxRetries, maxBuffer, cleanupInterval }
+const deviceConfig = new Map();
 
-// Helper untuk ambil konfigurasi per device
 function getConfig(tenantKey, deviceId) {
   const key = `${tenantKey}:${deviceId}`;
   if (deviceConfig.has(key)) return deviceConfig.get(key);
@@ -19,7 +17,6 @@ function getConfig(tenantKey, deviceId) {
   };
 }
 
-// Cleanup interval global, hapus data TTL habis per device
 setInterval(() => {
   const now = Date.now();
   for (const [tenantKey, deviceMap] of shards.entries()) {
@@ -29,9 +26,8 @@ setInterval(() => {
     }
     if (deviceMap.size === 0) shards.delete(tenantKey);
   }
-}, 1000 * 60); // interval global, TTL individual tetap berlaku
+}, 1000 * 60);
 
-// Signature verification
 export function verifySignature(tenantKey, payload, signature) {
   const secret = process.env.GATEWAY_KEY;
   const hmac = crypto.createHmac("sha256", secret);
@@ -40,17 +36,14 @@ export function verifySignature(tenantKey, payload, signature) {
   return digest === signature;
 }
 
-// Audit logging
 function logAudit(tenantKey, action) {
   if (!auditLogs.has(tenantKey)) auditLogs.set(tenantKey, []);
   auditLogs.get(tenantKey).push({ action, timestamp: Date.now() });
 }
 
-// Push data ke buffer, optional TTL/maxBuffer/maxRetries per push
 export async function push(tenantKey, data, attempt = 1) {
   const deviceId = data.device || "unknown";
 
-  // Update config per push jika ada
   if (data.ttl || data.maxBuffer || data.maxRetries) {
     const key = `${tenantKey}:${deviceId}`;
     const current = getConfig(tenantKey, deviceId);
@@ -93,7 +86,6 @@ export async function push(tenantKey, data, attempt = 1) {
   }
 }
 
-// Peek buffer, hanya data yang TTL belum habis
 export async function peek(tenantKey) {
   if (!shards.has(tenantKey)) return [];
   const now = Date.now();
@@ -107,7 +99,6 @@ export async function peek(tenantKey) {
   return valid;
 }
 
-// Hitung size buffer yang TTL belum habis
 export function size(tenantKey) {
   if (!shards.has(tenantKey)) return 0;
   const now = Date.now();
@@ -118,7 +109,6 @@ export function size(tenantKey) {
   return count;
 }
 
-// Metrics buffer per tenant/device
 export function metrics(tenantKey) {
   if (!shards.has(tenantKey)) return { tenant: 0, device: 0 };
   const now = Date.now();
@@ -129,12 +119,10 @@ export function metrics(tenantKey) {
   return { tenant: 1, device: deviceCount };
 }
 
-// Audit logs
 export function getAudit(tenantKey) {
   return auditLogs.has(tenantKey) ? auditLogs.get(tenantKey) : [];
 }
 
-// Optional: set config manual per device
 export function setConfig(tenantKey, deviceId, config) {
   const current = getConfig(tenantKey, deviceId);
   deviceConfig.set(`${tenantKey}:${deviceId}`, {

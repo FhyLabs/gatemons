@@ -14,9 +14,14 @@ router.post("/", async (req, res) => {
     return error(res, "Invalid signature", 401);
   }
 
+  if (!req.body?.payload?.device) {
+    return error(res, "Payload device is required", 400);
+  }
+
   await push(req.tenantKey, req.body);
   return ok(res, { status: "saved" });
 });
+
 
 router.get("/", async (req, res) => {
   const data = await peek(req.tenantKey);

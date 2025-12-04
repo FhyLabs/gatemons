@@ -14,7 +14,7 @@ router.post("/", async (req, res) => {
     return error(res, "Invalid signature", 401);
   }
 
-  if (!req.body?.payload?.device) {
+  if (!req.body?.device) {
     return error(res, "Payload device is required", 400);
   }
 

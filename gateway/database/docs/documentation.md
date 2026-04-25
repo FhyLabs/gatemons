@@ -7,11 +7,11 @@ Clients send device snapshots → Gateway stores them → Server fetches the lat
 
 | Environment | URL                           | Description                                |
 | ----------- | ----------------------------- | ------------------------------------------ |
-| Local       | `http://localhost:3000`       | For testing on a local server              |
+| Local       | `https://gatemons.vercel.app`       | For testing on a local server              |
 | Demo        | `https://gatemons.vercel.app` | For quick demo/testing without local setup |
 
 > All endpoints in this documentation are relative to the Base URL above.
-> Example: POST `/data` → `http://localhost:3000/data` or `https://gatemons.vercel.app/data`.
+> Example: POST `/data` → `https://gatemons.vercel.app/data` or `https://gatemons.vercel.app/data`.
 
 # Common Headers
 
@@ -264,7 +264,7 @@ const signature = crypto.createHmac("sha256", "GATEWAY_SECRET")
                         .update(JSON.stringify(payload))
                         .digest("hex");
 
-await axios.post("http://localhost:3000/data", payload, {
+await axios.post("https://gatemons.vercel.app/data", payload, {
   headers: {
     "tenant-id": "TENANT01",
     apikey: "ABC123",
@@ -279,7 +279,7 @@ await axios.post("http://localhost:3000/data", payload, {
 ```js
 const axios = require("axios");
 
-const res = await axios.get("http://localhost:3000/data", {
+const res = await axios.get("https://gatemons.vercel.app/data", {
   headers: {
     "tenant-id": "TENANT01",
     apikey: "ABC123",
